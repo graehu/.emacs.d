@@ -41,12 +41,24 @@ There are two things you can do about this warning:
 (package-initialize)
 ;;tings.
 (load-theme 'spacemacs-dark)
-(add-hook 'emacs-lisp-mode 'rainbow-delimiters-mode)
 ;; find some way to start eglot server when entering a project
 (require 'eglot)
-(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"));"/usr/bin/clangd" "--log=verbose"))
+;; Language hooks
+;; C/C++
+(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"));"--extra-arg-before=-xc++"));"--log=verbose"
 (add-hook 'c++-mode-hook 'eglot-ensure)
+(add-hook 'c++-mode-hook 'electric-pair-mode)
+(add-hook 'c++-mode-hook 'show-paren-mode)
 (add-hook 'c-mode-hook 'eglot-ensure)
+(add-hook 'c-mode-hook 'electric-pair-mode)
+(add-hook 'c-mode-hook 'show-paren-mode)
+;; Python
+(add-hook 'python-mode-hook 'eglot-ensure)
+(add-hook 'python-mode-hook 'electric-pair-mode)
+;; Emacs lisp
+(add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)
+(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
 ;;
 (global-company-mode)
 (which-key-mode)
@@ -57,15 +69,25 @@ There are two things you can do about this warning:
 ;;
 (require 'helm-projectile)
 (helm-projectile-on)
-(global-set-key (kbd "C-x b") 'helm-buffers-list)
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
+(helm-mode 1)
 ;; Goto changes
 (global-set-key (kbd "M-g n") 'flymake-goto-next-error)
 (global-set-key (kbd "M-g p") 'flymake-goto-prev-error)
-;;
+;; Company Keys
 (define-key company-active-map (kbd "C-n") 'company-select-next)
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
+;; Multi Cursor Keys
+(define-prefix-command 'mc-map)
+(global-set-key (kbd "C-j") 'mc-map)
+(define-key mc-map (kbd "C-n") 'mc/mark-next-like-this)
+(define-key mc-map (kbd "n") 'mc/skip-to-next-like-this)
+(define-key mc-map (kbd "C-p") 'mc/mark-previous-like-this)
+(define-key mc-map (kbd "p") 'mc/skip-to-previous-like-this)
+
 ;;
 (provide '.emacs)
 
