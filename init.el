@@ -13,7 +13,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0" "b73a23e836b3122637563ad37ae8c7533121c2ac2c8f7c87b381dd7322714cd0" default)))
  '(package-selected-packages
    (quote
-    (yaml-mode magit ace-jump-mode yasnippet markdown-mode disaster spacemacs-theme multiple-cursors helm-projectile atom-dark-theme company rainbow-delimiters helm one-themes ## which-key eglot))))
+    (flycheck-pyflakes use-package flycheck edit-indirect yaml-mode magit ace-jump-mode yasnippet markdown-mode disaster spacemacs-theme multiple-cursors helm-projectile atom-dark-theme company rainbow-delimiters helm one-themes ## which-key eglot))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -67,7 +67,8 @@ There are two things you can do about this warning:
 ;; Python
 (add-hook 'python-mode-hook 'eglot-ensure)
 (add-hook 'python-mode-hook 'electric-pair-mode)
-;; Python
+(add-hook 'python-mode-hook 'outline-minor-mode)
+;; Javascript
 (add-hook 'javascript-mode-hook 'eglot-ensure)
 (add-hook 'javascript-mode-hook 'electric-pair-mode)
 ;; Emacs lisp
@@ -111,7 +112,19 @@ There are two things you can do about this warning:
 ;;   "Emacs quick move minor mode"
 ;;   t)
 ;; you can select the key you prefer to
+;; Markdown
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;;
+(autoload 'gfm-mode "markdown-mode"
+   "Major mode for editing GitHub Flavored Markdown files" t)
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+(setq markdown-fontify-code-blocks-natively t)
+;;flycheck
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
 (provide '.emacs)
 
