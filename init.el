@@ -5,18 +5,16 @@
  ;; If there is more than one, they won't work right.
  '(avy-background t)
  '(company-backends
-   (quote
-    (company-bbdb company-eclim company-semantic company-xcode company-cmake company-capf company-files
+   '(company-bbdb company-eclim company-semantic company-xcode company-cmake company-capf company-yasnippet company-files
 		  (company-dabbrev-code company-gtags company-etags company-keywords)
-		  company-oddmuse company-dabbrev)))
+		  company-oddmuse company-dabbrev))
  '(custom-safe-themes
-   (quote
-    ("e29a6c66d4c383dbda21f48effe83a1c2a1058a17ac506d60889aba36685ed94" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0" "b73a23e836b3122637563ad37ae8c7533121c2ac2c8f7c87b381dd7322714cd0" default)))
- '(dap-lldb-debug-program (quote ("/usr/local/bin/lldb-vscode")))
+   '("e29a6c66d4c383dbda21f48effe83a1c2a1058a17ac506d60889aba36685ed94" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0" "b73a23e836b3122637563ad37ae8c7533121c2ac2c8f7c87b381dd7322714cd0" default))
+ '(dap-lldb-debug-program '("/usr/local/bin/lldb-vscode"))
  '(lsp-headerline-breadcrumb-icons-enable nil)
+ '(lsp-pyls-server-command '("pyls"))
  '(package-selected-packages
-   (quote
-    (doom-themes doom-modeline smart-mode-line-atom-one-dark-theme dap-mode flycheck-pyflakes use-package flycheck edit-indirect yaml-mode magit ace-jump-mode yasnippet markdown-mode disaster spacemacs-theme multiple-cursors helm-projectile atom-dark-theme company rainbow-delimiters helm one-themes ## which-key eglot))))
+   '(gdscript-mode csharp-mode indium jss helm-lsp lsp-ui dashboard doom-themes doom-modeline smart-mode-line-atom-one-dark-theme dap-mode flycheck-pyflakes use-package flycheck edit-indirect yaml-mode magit ace-jump-mode yasnippet markdown-mode disaster spacemacs-theme multiple-cursors helm-projectile atom-dark-theme company rainbow-delimiters helm one-themes ## which-key eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -45,12 +43,12 @@ There are two things you can do about this warning:
 ;;tings.
 (load-theme 'spacemacs-dark)
 ;; ansi colours in compilation mode
-(require 'ansi-color)
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region compilation-filter-start (point))
-  (toggle-read-only))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+(use-package ansi-color
+  :config
+  (defun my-colorize-compilation-buffer ()
+    (when (eq major-mode 'compilation-mode)
+      (ansi-color-apply-on-region compilation-filter-start (point-max))))
+  :hook (compilation-filter . my-colorize-compilation-buffer))
 (setq compilation-scroll-output t)
 ;; find some way to start eglot server when entering a project
 ;; (require 'eglot)
@@ -67,12 +65,15 @@ There are two things you can do about this warning:
 (add-hook 'c-mode-hook 'show-paren-mode)
 (add-hook 'c-mode-hook 'lsp)
 (add-hook 'c++-mode-hook 'lsp)
+(setq lsp-keymap-prefix "M-l")
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
       treemacs-space-between-root-nodes nil
       company-idle-delay 0.0
       company-minimum-prefix-length 1
       lsp-idle-delay 0.1)
+
+(use-package lsp-ui)
 
 ;; Enabling only some features
 (setq dap-auto-configure-features '(sessions locals controls tooltip))
@@ -99,10 +100,15 @@ There are two things you can do about this warning:
 ;; (add-hook 'javascript-mode-hook 'eglot-ensure)
 (add-hook 'javascript-mode-hook 'lsp)
 (add-hook 'javascript-mode-hook 'electric-pair-mode)
+(add-hook 'javascript-mode-hook 'show-paren-mode)
 ;; Emacs lisp
 (add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)
 (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'emacs-lisp-mode-hook 'show-paren-mode)
+;; csharp
+(add-hook 'csharp-mode-hook 'lsp)
+(add-hook 'csharp-mode-hook 'electric-pair-mode)
+(add-hook 'csharp-mode-hook 'show-paren-mode)
 ;;
 (global-company-mode)
 (which-key-mode)
@@ -119,6 +125,11 @@ There are two things you can do about this warning:
 (global-set-key (kbd "C-x r b") 'helm-filtered-bookmarks)
 (global-set-key (kbd "C-x m") 'helm-global-mark-ring)
 (helm-mode 1)
+;; dashboard
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
 ;; Goto changes
 ;; (global-set-key (kbd "M-g n") 'flymake-goto-next-error)
 ;; (global-set-key (kbd "M-g p") 'flymake-goto-prev-error)
@@ -171,6 +182,8 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
+;; Mouse
+(xterm-mouse-mode)
 ;; testing
 (display-time-mode)
 (require 'doom-modeline)
@@ -178,7 +191,6 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 ;; Or use this
 ;; Use `window-setup-hook' if the right segment is displayed incorrectly
 (add-hook 'after-init-hook #'doom-modeline-mode)
-
 (use-package doom-themes
   :config
   ;; Global settings (defaults)
@@ -196,5 +208,12 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
   ;; Corrects (and improves) org-mode's native fontification.
   ;; (doom-themes-org-config))
   )
+;;helm-lsp
+(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+;;yasnippet
+;; (add-to-list 'load-path
+;;               "~/.emacs.d/plugins/yasnippet")
+(require 'yasnippet)
+(yas-global-mode 1)
 
 (provide '.emacs)
