@@ -5,16 +5,36 @@
  ;; If there is more than one, they won't work right.
  '(avy-background t)
  '(company-backends
-   '(company-bbdb company-eclim company-semantic company-xcode company-cmake company-capf company-yasnippet company-files
-		  (company-dabbrev-code company-gtags company-etags company-keywords)
+   '(company-bbdb company-eclim company-semantic company-xcode
+		  company-cmake company-capf company-yasnippet
+		  company-files
+		  (company-dabbrev-code company-gtags company-etags
+					company-keywords)
 		  company-oddmuse company-dabbrev))
  '(custom-safe-themes
-   '("e29a6c66d4c383dbda21f48effe83a1c2a1058a17ac506d60889aba36685ed94" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0" "b73a23e836b3122637563ad37ae8c7533121c2ac2c8f7c87b381dd7322714cd0" default))
+   '("01f347a923dd21661412d4c5a7c7655bf17fb311b57ddbdbd6fce87bd7e58de6"
+     "7fd8b914e340283c189980cd1883dbdef67080ad1a3a9cc3df864ca53bdc89cf"
+     "e29a6c66d4c383dbda21f48effe83a1c2a1058a17ac506d60889aba36685ed94"
+     "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa"
+     "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279"
+     "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476"
+     "2642a1b7f53b9bb34c7f1e032d2098c852811ec2881eec2dc8cc07be004e45a0"
+     "b73a23e836b3122637563ad37ae8c7533121c2ac2c8f7c87b381dd7322714cd0"
+     default))
  '(dap-lldb-debug-program '("/usr/local/bin/lldb-vscode"))
  '(lsp-headerline-breadcrumb-icons-enable nil)
  '(lsp-pyls-server-command '("pyls"))
  '(package-selected-packages
-   '(gdscript-mode csharp-mode indium jss helm-lsp lsp-ui dashboard doom-themes doom-modeline smart-mode-line-atom-one-dark-theme dap-mode flycheck-pyflakes use-package flycheck edit-indirect yaml-mode magit ace-jump-mode yasnippet markdown-mode disaster spacemacs-theme multiple-cursors helm-projectile atom-dark-theme company rainbow-delimiters helm one-themes ## which-key eglot)))
+   '(eldoc-box company-glsl glsl-mode helm-lsp helm-projectile magit
+	       gnu-elpa-keyring-update 2bit eldoc abc-mode
+	       gdscript-mode csharp-mode indium jss lsp-ui dashboard
+	       doom-themes doom-modeline
+	       smart-mode-line-atom-one-dark-theme dap-mode
+	       flycheck-pyflakes use-package edit-indirect yaml-mode
+	       ace-jump-mode yasnippet markdown-mode disaster
+	       spacemacs-theme multiple-cursors atom-dark-theme
+	       company rainbow-delimiters helm one-themes ## which-key
+	       eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -37,7 +57,7 @@ There are two things you can do about this warning:
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
   ;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
   ;; and `package-pinned-packages`. Most users will not need or want to do this.
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   )
 (package-initialize)
 ;;tings.
@@ -117,8 +137,8 @@ There are two things you can do about this warning:
 (define-key projectile-mode-map (kbd "M-p") 'projectile-command-map)
 (projectile-mode +1)
 ;;
-(require 'helm-projectile)
-(helm-projectile-on)
+;; (require 'helm-projectile)
+;; (helm-projectile-on)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x b") 'helm-buffers-list)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
@@ -215,5 +235,10 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
 ;;               "~/.emacs.d/plugins/yasnippet")
 (require 'yasnippet)
 (yas-global-mode 1)
+
+(use-package all-the-icons
+  :if (display-graphic-p))
+
+(set-face-attribute 'default nil :height 130)
 
 (provide '.emacs)
